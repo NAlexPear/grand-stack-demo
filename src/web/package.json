@@ -1,0 +1,12 @@
+{
+  "name": "grand-stack-demo",
+  "version": "1.0.0",
+  "description": "GraphQL, React, Apollo, and Neo4j-DB working together in a demo app",
+  "main": "src/web/index.js",
+  "author": "Alex Pearson <alex@alexpear.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
