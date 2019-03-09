@@ -1,0 +1,14 @@
+type Group {
+  name: String!
+}
+
+type User {
+  name: String
+  groups: [Group] @relation(name: "IN_GROUP", direction: "OUT")
+}
+
+type Query {
+  usersBySubstring(substring: String): [User] @cypher(
+    statement: "MATCH (u:User) WHERE u.name CONTAINS $substring RETURN u"
+  )
+}

@@ -6,17 +6,24 @@ services:
       context: ./src/proxy
       dockerfile: Dockerfile
     ports:
-      - '9000:80'
+      - 9000:80
     links:
       - web
       - api
 
   db:
     tty: true
-    image: neo4j:3.5
+    build: ./src/db
+    command: neo4j start
     ports:
-      - "7474:7474"
-      - "7687:7687"
+      - 7474:7474
+    expose:
+      - 7687
+    environment:
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_dbms_shell_enabled=true
     volumes:
       - db-data:/data
 
@@ -25,8 +32,8 @@ services:
     image: node:11
     working_dir: /api
     command: /bin/bash -c 'yarn && yarn start'
-    expose:
-      - '8000'
+    ports:
+      - 8000:8000
     links:
       - db
     volumes:
@@ -38,7 +45,7 @@ services:
     working_dir: /web
     command: /bin/bash -c 'yarn && node index.js'
     expose:
-      - '8080'
+      - 8080
     volumes:
       - ./src/web:/web:delegated
 
