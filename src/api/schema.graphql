@@ -1,14 +1,64 @@
+interface Content {
+  id: ID!
+  name: String!
+}
+
+input ByID {
+  id: ID!
+}
+
+type Resource implements Content {
+  id: ID!
+  name: String!
+  body: String!
+}
+
+type Quiz implements Content {
+  id: ID!
+  name: String!
+  question: String!
+  answer: String!
+  distractors: [String!]!
+}
+
 type Group {
+  id: ID!
   name: String!
 }
 
 type User {
-  name: String
-  groups: [Group] @relation(name: "IN_GROUP", direction: "OUT")
+  id: ID!
+  name: String!
+  groups: [Group] @relation(name: "IN_GROUP", direction: IN)
+}
+
+type Course {
+  id: ID!
+  name: String!
+  contents: [Content] @relation(name: "INCLUDES_ITEM", direction: OUT)
 }
 
 type Query {
   usersBySubstring(substring: String): [User] @cypher(
-    statement: "MATCH (u:User) WHERE u.name CONTAINS $substring RETURN u"
+    statement: "MATCH (user:User) WHERE user.name CONTAINS $substring RETURN u"
+  )
+}
+
+type Mutation {
+  AddCourseContent(from: ByID!, to: ByID!): Course @cypher(
+    statement: """
+    MATCH (course: Course { id: $from.id })
+    MATCH (content { id: $to.id }) 
+    CREATE UNIQUE (course)-[:INCLUDES_ITEM]->(content)
+    RETURN course
+    """
+  )
+
+  RemoveCourseContent(from: ByID!, to: ByID!): Course @cypher(
+    statement: """
+    MATCH (course: Course { id: $from.id })-[r:INCLUDES_ITEM]->({ id: $to.id })
+    DELETE r
+    RETURN course
+    """
   )
 }
