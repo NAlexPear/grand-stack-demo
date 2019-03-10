@@ -1,0 +1,6 @@
+type Query {
+  usersBySubstring(substring: String): [User] @cypher(
+    statement: "MATCH (user:User) WHERE user.name CONTAINS $substring RETURN u"
+  )
+}
+

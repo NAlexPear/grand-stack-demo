@@ -1,0 +1,36 @@
+interface Content {
+  id: ID!
+  name: String!
+}
+
+type Resource implements Content {
+  id: ID!
+  name: String!
+  body: String!
+}
+
+type Quiz implements Content {
+  id: ID!
+  name: String!
+  question: String!
+  answer: String!
+  distractors: [String!]!
+}
+
+type Group {
+  id: ID!
+  name: String!
+}
+
+type User {
+  id: ID!
+  name: String!
+  groups: [Group] @relation(name: "IN_GROUP", direction: IN)
+}
+
+type Course {
+  id: ID!
+  name: String!
+  contents: [Content] @relation(name: "INCLUDES_ITEM", direction: OUT)
+}
+

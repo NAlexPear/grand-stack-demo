@@ -1,0 +1,22 @@
+input ByID {
+  id: ID!
+}
+
+type Mutation {
+  AddCourseContent(from: ByID!, to: ByID!): Course @cypher(
+    statement: """
+    MATCH (course: Course { id: $from.id })
+    MATCH (content { id: $to.id }) 
+    CREATE UNIQUE (course)-[:INCLUDES_ITEM]->(content)
+    RETURN course
+    """
+  )
+
+  RemoveCourseContent(from: ByID!, to: ByID!): Course @cypher(
+    statement: """
+    MATCH (course: Course { id: $from.id })-[r:INCLUDES_ITEM]->({ id: $to.id })
+    DELETE r
+    RETURN course
+    """
+  )
+}
